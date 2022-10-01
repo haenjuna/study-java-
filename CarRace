@@ -1,0 +1,111 @@
+public class CarRace {
+	Car[] cars = new Car[10];			//10개의 자동차의 정보를 입력 받기위한 배열함수 생성
+	Scanner sc = new Scanner(System.in);
+	String[] carname = new String[10];		//각 상세내용에 해당하는 정보를 입력 받기 위한 배열함수들 생성
+	int[] engine = new int[10];
+	int[] door = new int[10];
+	float[] x0 = new float[10];
+	float[] y0 = new float[10];
+
+	void scaninfo() {					//10대의 자동차 정보를 입력 받음
+		for (int i = 0; i < 10; i++) {
+			carname[i] = sc.next();
+			engine[i] = sc.nextInt();
+			door[i] = sc.nextInt();
+			x0[i] = sc.nextFloat();
+			y0[i] = sc.nextFloat();
+		}
+	}
+
+	void makecar() {					//입력받은 정보를 자동차에 적용
+		for (int i = 0; i < 10; i++) {
+			cars[i] = new Car(carname[i], engine[i], door[i], x0[i], y0[i]);
+		}
+	}
+
+	void rollcall() {
+		for (int i = 0; i < 10; i++) {
+			cars[i].info();
+		}
+	}
+
+	void start() {
+		for (int i = 0; i < 10; i++) {
+			cars[i].start();
+		}
+	}
+
+	void run() {
+		Car winner = null;
+		int t = 0;
+		do {
+			System.out.println(++t);
+			for (int i = 0; i < 10; i++) {
+				if (cars[i].move() == true)
+					winner = cars[i];
+			}
+			try {
+				Thread.sleep(400);
+			} catch (Exception e) {
+			}
+		} while (winner == null);
+
+		System.out.print(" 축! 오늘의 승자는");
+		winner.info();
+	}
+
+	public static void main(String a[]) {
+		CarRace cr = new CarRace();
+		cr.scaninfo();
+		cr.makecar();
+		cr.rollcall();
+		cr.start();
+		cr.run();
+	}
+}
+
+class Car {
+	int nDoors = 4, nSeats = 5, cc;
+	double x, y, vx, vy;
+	String model, 제조사;
+	boolean ngin = false;
+
+	Car(String 모델명, int 배기량, int 문짝수, float x0, float y0) {
+		model = 모델명;
+		cc = 배기량;
+		nDoors = 문짝수;
+		x = x0;
+		y = y0;
+	}
+
+	void info() {
+		System.out.println(model + "입니다");
+	}
+
+	void start() {
+		ngin = true;
+		System.out.println("~부릉~");
+	}
+
+	boolean move() {    
+		vx = spurt(); 
+		x = x + vx;
+		display();
+		System.out.println(model + "at" + (int) x);
+		return ingoal();
+	}
+
+	double spurt() {
+		return (Math.random() - 0.3) * 30;
+	}
+
+	void display() {
+		for (int i = 0; i < x; i += 5)
+			System.out.print("-");
+		System.out.print(":=:-");
+	}
+
+	boolean ingoal() {
+		return x > 200;
+	}
+}
