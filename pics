@@ -1,0 +1,523 @@
+import java.util.*;
+
+public class InheritanceDemo {
+	int npp = 0;
+	Person[] ppv;
+	Student[] stv;
+	Faculty[] profv;
+	Staff jigwon;
+	Course crsv[];
+
+	public static void main(String[] args) {
+		InheritanceDemo pcis = new InheritanceDemo();
+		pcis.recruit_employees();
+		pcis.run_school();
+		pcis.report();
+	}
+
+	InheritanceDemo() {
+		ppv = new Person[100];
+		npp = 0;
+	}
+
+	void recruit_employees() { //교수 및 직원 생성
+		profv = new Faculty[3];
+		profv[0] = new Faculty("신교수", 48, "부산시 남구", 5000000, "공과대학");
+		profv[1] = new Faculty("최교수", 39, "부산시 해운대구", 4000000, "공과대학");
+		profv[2] = new Faculty("이교수", 52, "부산시 연제구", 6000000, "공과대학");
+		jigwon = new Staff("박 경비원", 42, 3000000, "대학본부");
+		jigwon.setDepartment("서무과");
+		ppv[npp++] = profv[0];
+		ppv[npp++] = profv[1];
+		ppv[npp++] = profv[2];
+		ppv[npp++] = jigwon;
+	}
+
+	void report() { //이하 내용들을 출략
+		print_people();
+		print_수강편람();
+		for (int i = 0; i < crsv.length; i++) // 강의의 갯수 만큼 반복
+			print_출석부(crsv[i]);
+		for (int i = 0; i < stv.length; i++) // 학생 수만큼 반복
+			print_학생시간표(stv[i]);
+		for (int i = 0; i < profv.length; i++) // 교수의 수만큼 반복
+			print_교수시간표(profv[i]);
+
+	}
+
+	void run_school() {
+		recruit_학생();
+		open_강좌();
+		register_수강과목();
+	}
+
+	void recruit_학생() {		//학생 생성
+		String namev[] = { "강", "김", "고", "박", "신", "심", "이", "조", "최", "황" };
+		int agev[] = { 21, 24, 22, 19, 21, 21, 21, 21, 23, 21 };
+		stv = new Student[namev.length];
+		for (int i = 0; i < namev.length; i++) {
+			stv[i] = new Student(namev[i], agev[i], 3, 201612345 + i, "IT융합응용공");
+			ppv[npp++] = stv[i];
+		}
+	}
+
+	void open_강좌() {	//강의 개설
+		crsv = new Course[6];
+		crsv[0] = new Course("   java    ", profv[0], "Thu 2-3, Fri 2-3", "1325");
+		crsv[1] = new Course("   논리회로   ", profv[1], "Wed 8-9, Thu 7", "0");
+		crsv[2] = new Course("   기전전    ", profv[1], "Fri 7-9", "0");
+		crsv[3] = new Course(" 인공지능입문  ", profv[0], "Tue 2-3, Thu 6-7", "1325");
+		crsv[4] = new Course("   이산수학   ", profv[2], "Wed 2-4", "0");
+		crsv[5] = new Course(" 데이터통신   ", profv[2], "Mon 5-7", "0");
+	}
+
+	void print_수강편람() { //개설된 강의 정보 출력
+		System.out.println("\n- 수강 편람 -");
+		for (int i = 0; i < crsv.length; i++)
+			crsv[i].info();
+	}
+
+	void print_출석부(Course cs) {
+		System.out.println("-------------------------------------------");
+		System.out.println("과목:" + cs.getTitle() + "(" + cs.getTP() + ")" + " 담당교수:" + cs.lecturer.getName());
+		System.out.println("    ");
+		System.out.print("  ");
+		for (int n = 1; n <= 16; n++)
+			System.out.printf(" %3d", n);
+		System.out.println("");
+		cs.listRegistrants();
+	}
+
+	void register_수강과목() {
+		Course ja = crsv[0];
+		Course nh = crsv[1];
+		Course gj = crsv[2];
+		Course ii = crsv[3];
+		Course is = crsv[4];
+		Course dt = crsv[5];
+		int ja_list[] = { 0, 3, 5, 8 }; //각 강의를 듣는 학생 설정
+		int nh_list[] = { 1, 2, 4 };
+		int gj_list[] = { 2, 6, 7, 9 };
+		int ii_list[] = { 1, 4, 9 };
+		int is_list[] = { 3, 6, 8 };
+		int dt_list[] = { 0, 5, 7 };
+		for (int i = 0; i < ja_list.length; i++)
+			stv[ja_list[i]].registerCourse(ja);
+		for (int i = 0; i < nh_list.length; i++)
+			stv[nh_list[i]].registerCourse(nh);
+		for (int i = 0; i < gj_list.length; i++)
+			stv[gj_list[i]].registerCourse(gj);
+		for (int i = 0; i < ii_list.length; i++)
+			stv[ii_list[i]].registerCourse(ii);
+		for (int i = 0; i < is_list.length; i++)
+			stv[is_list[i]].registerCourse(is);
+		for (int i = 0; i < dt_list.length; i++)
+			stv[dt_list[i]].registerCourse(dt);
+		System.out.println("수강신청:" // 각 강의에 포함되는 학생들 수를 모두 더해서 출력
+				+ (ja_list.length + nh_list.length + gj_list.length + ii_list.length + is_list.length + dt_list.length)
+				+ "건 - 성공.");
+	}
+
+	void print_학생시간표(Student st) {
+		System.out.println("\n<< 수강과목/시간표 >>");
+		System.out.println("이름: " + st.getName());
+		for (int i = 0; i < st.nCourses; i++) { // 듣는 강의의 갯수만큼 반복
+			Course c = st.getCourse(i);
+			System.out.println(c.getTitle() + " (" + c.getTP() + ") by " + c.lecturer.getName());
+		}
+	}
+
+	void print_교수시간표(Faculty f) {
+		System.out.println("\n<< 교수시간표 >>");
+		System.out.println("이름: " + f.getName());
+		for (int i = 0; i < f.nCourses; i++) {
+			Course c = f.getCourse(i);
+			System.out.println(c.getTitle() + " (" + c.getTP() + ")");
+		}
+	}
+
+	void print_people() {
+		for (int i = 0; i < npp; i++) {
+			System.out.println("<" + (i + 1) + ">---------------------------");
+			ppv[i].info();
+		}
+	}
+}
+
+class Person {
+	private String name; // private로 접근을 제한
+	private int age;
+	private String address;
+
+	// 다양한 생성자
+	Person() {
+		name = "No name yet.";
+		age = 0;
+		address = "";
+	}
+
+	Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+		address = "";
+	}
+
+	Person(String name, int age, String address) {
+		this.name = name;
+		this.age = age;
+		this.address = address;
+	}
+
+	// public사용, 데이터 접근을 위한 메서드들
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	// 객체 정보 표시
+	public void info() {
+		System.out.println("이름 : " + name);
+		System.out.println("나이 : " + age);
+		System.out.println("주소 : " + address);
+	}
+}
+
+class Employee extends Person { // Person 클래스에서 상속
+	private int salary; // 급여
+	private String position; // 소속
+	private Employee supervisor; // 직속 상사
+
+	// 다양한 생성자.
+	Employee() {
+		super();
+		salary = 0;
+		position = "Not yet";
+		supervisor = null;
+	}
+
+	Employee(String name, int age, int salary, String position) {
+		super(name, age);
+		this.salary = salary;
+		this.position = position;
+	}
+
+	Employee(String name, int age, String address, int salary, String position) {
+		super(name, age, address);
+		this.salary = salary;
+		this.position = position;
+	}
+
+	Employee(String name, int age, int salary, String position, Employee supervisor) {
+		super(name, age);
+		this.salary = salary;
+		this.position = position;
+		this.supervisor = supervisor;
+	}
+
+	Employee(String name, int age, String address, int salary, String position, Employee supervisor) {
+		super(name, age, address);
+		this.salary = salary;
+		this.position = position;
+		this.supervisor = supervisor;
+	}
+
+	// 데이터 접근을 위한 메쏘드들
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setSupervisor(Employee supervisor) {
+		this.supervisor = supervisor;
+	}
+
+	public Employee getSupervisor() {
+		return supervisor;
+	}
+
+	// 객체 정보 표시
+	public void info() {
+		super.info(); // Person 클래스의 info 메서드 실행
+		System.out.println("급여 : " + salary);
+		System.out.println("소속 : " + position);
+		if (supervisor != null)
+			System.out.println("상사 : " + supervisor.getName());
+	}
+}
+
+class Staff extends Employee { // Employee 클래스에서 상속받음
+
+	private String department; // 부서
+
+	// 다양한 생성자
+	Staff() {
+		super();
+		department = "Not yet";
+	}
+
+	Staff(String name, int age, int salary, String position) {
+		super(name, age, salary, position);
+		department = "Not yet";
+	}
+
+	Staff(String name, int age, String address, int salary, String position) {
+		super(name, age, address, salary, position);
+		department = "Not yet";
+	}
+
+	Staff(String name, int age, int salary, String position, Employee supervisor) {
+		super(name, age, salary, position, supervisor);
+		department = "Not yet";
+	}
+
+	Staff(String name, int age, String address, int salary, String position, Employee supervisor) {
+		super(name, age, address, salary, position, supervisor);
+		department = "Not yet";
+	}
+
+	// 데이터 접근을 위한 메쏘드
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	// 객체 정보 표시
+	public void info() {
+		super.info(); // Employee 클래스의 info 메서드 실행
+		System.out.println("부서 : " + department);
+	}
+}
+
+class Student extends Person {
+	private int grade; // 학년
+	private int studentNo; // 학번
+	private String major; // 전공
+
+	// 다양한 생성자
+	Student() {
+		super();
+		grade = 0;
+		studentNo = 0;
+		major = "Not yet";
+	}
+
+	Student(String name, int age, int grade, int studentNo, String major) {
+		super(name, age);
+		this.grade = grade;
+		this.studentNo = studentNo;
+		this.major = major;
+	}
+
+	Student(String name, int age, String address, int grade, int studentNo, String major) {
+		super(name, age, address);
+		this.grade = grade;
+		this.studentNo = studentNo;
+		this.major = major;
+	}
+
+	// 데이터 접근을 위한 메쏘드들
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
+
+	public int getGrade() {
+		return grade;
+	}
+
+	public void setStudentNo(int studentNo) {
+		this.studentNo = studentNo;
+	}
+
+	public int getStudentNo() {
+		return studentNo;
+	}
+
+	public void setMajor(String major) {
+		this.major = major;
+	}
+
+	public String getMajor() {
+		return major;
+	}
+
+	// 객체 정보 표시
+	public void info() {
+		super.info(); // Person 클래스의 info 메서드 실행
+		System.out.println("학년 : " + grade);
+		System.out.println("학번 : " + studentNo);
+		System.out.println("전공 : " + major);
+	}
+
+	Course myCoursev[] = new Course[3]; // 배열을 크기 3으로 설정
+	int nCourses = 0; // 0으로 초기화
+
+	void registerCourse(Course c) {
+		if (check() == true)
+			return;
+		myCoursev[nCourses++] = c;
+		c.register(this);
+	}
+
+	boolean check() { // 2개까지 강의를 들을 수 있음
+		if (nCourses >= 3)
+			System.out.println("no more courses");
+		return nCourses >= 3;
+	}
+
+	Course getCourse(int i) {
+		return myCoursev[i];
+	}
+}
+
+class Faculty extends Employee {
+	private String course; // 과목
+
+	// 다양한 생성자
+	Faculty() {
+		super();
+		course = "Not yet";
+	}
+
+	Faculty(String name, int age, int salary, String position) {
+		super(name, age, salary, position);
+		course = "Not yet";
+	}
+
+	Faculty(String name, int age, String address, int salary, String position) {
+		super(name, age, address, salary, position);
+		course = "Not yet";
+	}
+
+	Faculty(String name, int age, int salary, String position, Employee supervisor) {
+		super(name, age, salary, position, supervisor);
+		course = "Not yet";
+	}
+
+	Faculty(String name, int age, String address, int salary, String position, Employee supervisor) {
+		super(name, age, address, salary, position, supervisor);
+		course = "Not yet";
+	}
+
+
+	// 데이터 접근을 위한 메쏘드
+	public void setCourse(String course) {
+		this.course = course;
+	}
+
+	public String getCourse() {
+		return course;
+	}
+
+	// 객체의 정보 표시
+	public void info() {
+		super.info();
+		System.out.println("강의 : " + course);
+	}
+
+	Course Coursev[] = new Course[2]; //듣는 강의수
+	int nCourses = 0;
+
+	void openCourse(Course c) {
+		Coursev[nCourses++] = c;
+	}
+
+	Course getCourse(int i) {
+		return Coursev[i];
+	}
+}
+
+class Course {
+	String title, time, room;
+	Faculty lecturer;
+	Student regist[];
+	Vector vregist;
+
+	Course() { // 생성자 2개
+		regist = new Student[10];
+		vregist = new Vector();
+	}
+
+	Course(String nam, Faculty prof, String tim, String rum) {
+		this();
+		title = nam;
+		time = tim;
+		room = rum;
+		lecturer = prof;
+		prof.openCourse(this);
+	}
+
+	String getTitle() {
+		return title;
+	}
+
+	Faculty getLecturer() {
+		return lecturer;
+	}
+
+	String getTP() {
+		return time + " #" + room;
+	}
+
+	int numRegist() {
+		return vregist.size();
+	}
+
+	void register(Student st) {
+		vregist.add(st);
+	}
+
+	void dropme(Student st) {
+		vregist.removeElement(st);
+	}
+
+	void listRegistrants() { // 출석부 안의 점 찍기
+		for (int i = 0; i < vregist.size(); i++) { // 벡터의 길이만클 반복
+			Student st = (Student) vregist.elementAt(i);
+			System.out.print(st.getName());
+			for (int j = 0; j < 16; j++)
+				System.out.print("   .");
+			if ((i + 1) % 5 == 0) {
+				System.out.print("\n   ");
+				for (int j = 0; j < 16; j++)
+					System.out.print(" --");
+			}
+			System.out.println("");
+		}
+	}
+
+	void info() {
+		System.out.println(title + "담당교수 : " + lecturer.getName() + ", 시간 :" + time + " 강의실 : " + room);
+	}
